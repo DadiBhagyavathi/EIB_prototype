@@ -1,0 +1,10 @@
+node_modules
+.git
+npm-debug.log
+frontend/node_modules
+artifacts
+cache
+backend/state.json
+Blockchain-deploy
+README.md
+*.log
