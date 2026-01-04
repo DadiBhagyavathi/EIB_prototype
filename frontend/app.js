@@ -148,11 +148,24 @@ function renderBeneficiaries(){
     btn.style.marginLeft = '8px';
     btn.innerText = b.verified ? 'Unverify' : 'Verify';
     btn.onclick = () => { b.verified = !b.verified; renderBeneficiaries(); updateStats(); };
-      btn.onclick = () => { 
-        b.verified = !b.verified; 
-        renderBeneficiaries(); 
-        updateStats(); 
-        showToast(`${b.name} is now ${b.verified ? 'verified' : 'unverified'}`, b.verified ? 'success' : 'info');
+      btn.onclick = async () => { 
+        if (!backendAvailable){
+          b.verified = !b.verified; 
+          renderBeneficiaries(); 
+          updateStats(); 
+          showToast(`${b.name} is now ${b.verified ? 'verified' : 'unverified'}`, b.verified ? 'success' : 'info');
+          return;
+        }
+        try{
+          const r = await fetch('/api/verify', { method:'POST', headers:{'content-type':'application/json'}, body: JSON.stringify({ beneficiary: b.addr }) });
+          const j = await r.json();
+          if (!r.ok) { showToast(j.error||'verify failed','error'); return; }
+          // update local
+          const local = beneficiaries.find(x=>x.addr===j.beneficiary.addr);
+          if (local) local.verified = j.beneficiary.verified;
+          renderBeneficiaries(); updateStats();
+          showToast(`${b.name} is now ${j.beneficiary.verified ? 'verified' : 'unverified'}`, j.beneficiary.verified ? 'success':'info');
+        }catch(err){ showToast(err.message,'error'); }
       };
     li.appendChild(btn);
     beneficiariesEl.appendChild(li);
@@ -180,6 +193,24 @@ connectBtn.onclick = async () => {
 
   populateWalletSelect();
   populateBeneficiarySelect();
+  // try to use backend APIs if available
+  let backend = true;
+  try{
+    const r = await fetch('/api/wallets');
+    if (!r.ok) throw new Error('no api');
+    const ws = await r.json();
+    const bs = await (await fetch('/api/beneficiaries')).json();
+    // replace local state with backend-provided
+    fakeWallets.length = 0; for (const w of ws) fakeWallets.push(w);
+    beneficiaries.length = 0; for (const b of bs) beneficiaries.push(b);
+    contractStatusEl.innerText = 'Connected to backend API (live)';
+  }catch(err){
+    backend = false;
+    // fallback to local simulation
+  }
+
+  populateWalletSelect();
+  populateBeneficiarySelect();
   // auto-select first wallet
   walletSelect.selectedIndex = 0;
   selectedWallet = fakeWallets[0];
@@ -198,22 +229,40 @@ walletSelect.onchange = () => {
   updateStats();
 };
 
-allocBtn.onclick = () => {
+allocBtn.onclick = async () => {
   if (!selectedWallet) { setStatus('Select a wallet first'); showToast('Select a wallet first', 'error'); return; }
   const amtStr = allocAmountInput.value;
   if (!amtStr || Number(amtStr) <= 0) { setStatus('Enter allocation amount'); showToast('Enter allocation amount', 'error'); return; }
   const wei = parseEther(amtStr);
-  if (wei > selectedWallet.balance) { setStatus('Insufficient balance'); showToast('Insufficient balance', 'error'); return; }
-  const benAddr = beneficiarySelect.value;
-  const ben = beneficiaries.find(b=>b.addr===benAddr);
-  if (!ben) { setStatus('Select a beneficiary'); showToast('Select a beneficiary', 'error'); return; }
-  // Simulate allocation
-  selectedWallet.balance -= wei;
-  ben.allocated += wei;
-  setStatus(`Allocated ${amtStr} ETH to ${ben.name}`);
-  showToast(`Allocated ${amtStr} ETH to ${ben.name}`, 'success');
-  renderBeneficiaries();
-  updateStats();
+  if (!backendAvailable) {
+    if (wei > selectedWallet.balance) { setStatus('Insufficient balance'); showToast('Insufficient balance', 'error'); return; }
+    const benAddr = beneficiarySelect.value;
+    const ben = beneficiaries.find(b=>b.addr===benAddr);
+    if (!ben) { setStatus('Select a beneficiary'); showToast('Select a beneficiary', 'error'); return; }
+    // Simulate allocation
+    selectedWallet.balance -= wei;
+    ben.allocated += wei;
+    setStatus(`Allocated ${amtStr} ETH to ${ben.name}`);
+    showToast(`Allocated ${amtStr} ETH to ${ben.name}`, 'success');
+    renderBeneficiaries();
+    updateStats();
+    return;
+  }
+  // backend path
+  try{
+    const res = await fetch('/api/allocate', { method:'POST', headers:{'content-type':'application/json'}, body: JSON.stringify({ wallet: selectedWallet.address, beneficiary: beneficiarySelect.value, amount: wei.toString() }) });
+    const j = await res.json();
+    if (!res.ok) { setStatus('Error: '+(j.error||'allocation failed')); showToast(j.error||'allocation failed','error'); return; }
+    // update local view from response
+    // find updated wallet and beneficiary
+    const w = j.wallet; const b = j.beneficiary || j.beneficiary;
+    const localW = fakeWallets.find(x=>x.address===w.address); if (localW) localW.balance = w.balance;
+    const localB = beneficiaries.find(x=>x.addr===j.beneficiary.addr); if (localB) localB.allocated = j.beneficiary.allocated;
+    setStatus(`Allocated ${amtStr} ETH to ${j.beneficiary.name}`);
+    showToast(`Allocated ${amtStr} ETH to ${j.beneficiary.name}`, 'success');
+    renderBeneficiaries();
+    updateStats();
+  }catch(err){ setStatus('Error: '+err.message); showToast(err.message,'error'); }
 };
 
 
