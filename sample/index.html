@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>Bhagyavathi Dadi | AI Engineer</title>
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  scroll-behavior:smooth;
+}
+
+:root{
+  --bg:#040816;
+  --card:#0f172a;
+  --text:#fff;
+  --cyan:#00e5ff;
+  --purple:#8b5cf6;
+  --pink:#ff00ff;
+  --light:#94a3b8;
+}
+
+body{
+  font-family:'Poppins',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  overflow-x:hidden;
+}
+
+/* =========================
+   CUSTOM SCROLLBAR
+========================= */
+
+::-webkit-scrollbar{
+  width:10px;
+}
+
+::-webkit-scrollbar-track{
+  background:#050816;
+}
+
+::-webkit-scrollbar-thumb{
+  background:linear-gradient(var(--cyan),var(--purple));
+  border-radius:20px;
+}
+
+/* =========================
+   CANVAS
+========================= */
+
+#bgCanvas{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  z-index:-10;
+}
+
+/* =========================
+   NAVBAR
+========================= */
+
+nav{
+  position:fixed;
+  width:100%;
+  top:0;
+  left:0;
+  z-index:9999;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:20px 8%;
+  backdrop-filter:blur(18px);
+  background:rgba(0,0,0,0.25);
+  border-bottom:1px solid rgba(255,255,255,0.08);
+}
+
+.logo{
+  font-family:'Orbitron',sans-serif;
+  font-size:1.5rem;
+  color:var(--cyan);
+  text-shadow:0 0 10px var(--cyan);
+}
+
+nav ul{
+  display:flex;
+  list-style:none;
+  gap:35px;
+}
+
+nav ul li a{
+  color:white;
+  text-decoration:none;
+  position:relative;
+  transition:0.3s;
+}
+
+nav ul li a::after{
+  content:'';
+  position:absolute;
+  left:0;
+  bottom:-6px;
+  width:0%;
+  height:2px;
+  background:var(--cyan);
+  transition:0.4s;
+}
+
+nav ul li a:hover::after{
+  width:100%;
+}
+
+/* =========================
+   HERO
+========================= */
+
+.hero{
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  position:relative;
+  overflow:hidden;
+  padding:0 10%;
+}
+
+.hero-content{
+  text-align:center;
+  z-index:2;
+}
+
+.hero h1{
+  font-size:5rem;
+  font-family:'Orbitron',sans-serif;
+  line-height:1.1;
+  margin-bottom:20px;
+  animation:glow 3s infinite alternate;
+}
+
+.hero h1 span{
+  background:linear-gradient(90deg,var(--cyan),var(--purple),#fff);
+  background-size:400%;
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  animation:gradientFlow 8s linear infinite;
+}
+
+@keyframes gradientFlow{
+  0%{background-position:0%;}
+  100%{background-position:400%;}
+}
+
+@keyframes glow{
+  from{
+    text-shadow:0 0 20px rgba(0,229,255,0.3);
+  }
+
+  to{
+    text-shadow:
+    0 0 30px rgba(0,229,255,0.7),
+    0 0 60px rgba(139,92,246,0.6);
+  }
+}
+
+.typing{
+  font-size:1.4rem;
+  color:var(--light);
+  height:40px;
+}
+
+.hero p{
+  max-width:850px;
+  margin:auto;
+  margin-top:20px;
+  line-height:1.9;
+  color:var(--light);
+}
+
+.hero-btns{
+  margin-top:40px;
+  display:flex;
+  justify-content:center;
+  gap:20px;
+  flex-wrap:wrap;
+}
+
+.btn{
+  padding:15px 35px;
+  border-radius:50px;
+  border:none;
+  color:white;
+  text-decoration:none;
+  position:relative;
+  overflow:hidden;
+  transition:0.5s;
+}
+
+.btn-primary{
+  background:linear-gradient(90deg,var(--cyan),var(--purple));
+}
+
+.btn-outline{
+  border:1px solid rgba(255,255,255,0.2);
+}
+
+.btn:hover{
+  transform:translateY(-8px);
+  box-shadow:0 10px 40px rgba(0,229,255,0.4);
+}
+
+/* =========================
+   FLOATING SHAPES
+========================= */
+
+.shape{
+  position:absolute;
+  border-radius:50%;
+  filter:blur(40px);
+  opacity:0.4;
+}
+
+.shape1{
+  width:300px;
+  height:300px;
+  background:var(--cyan);
+  top:-100px;
+  left:-100px;
+  animation:float1 12s infinite alternate;
+}
+
+.shape2{
+  width:400px;
+  height:400px;
+  background:var(--purple);
+  bottom:-150px;
+  right:-150px;
+  animation:float2 15s infinite alternate;
+}
+
+@keyframes float1{
+  from{transform:translateY(0px);}
+  to{transform:translateY(80px);}
+}
+
+@keyframes float2{
+  from{transform:translateX(0px);}
+  to{transform:translateX(-80px);}
+}
+
+/* =========================
+   SECTION
+========================= */
+
+section{
+  padding:120px 8%;
+  position:relative;
+}
+
+.section-title{
+  font-size:3rem;
+  text-align:center;
+  margin-bottom:70px;
+  font-family:'Orbitron',sans-serif;
+  position:relative;
+}
+
+.section-title::after{
+  content:'';
+  width:120px;
+  height:4px;
+  background:linear-gradient(90deg,var(--cyan),var(--purple));
+  position:absolute;
+  bottom:-15px;
+  left:50%;
+  transform:translateX(-50%);
+}
+
+/* =========================
+   GLASS CARD
+========================= */
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+  gap:30px;
+}
+
+.card{
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:30px;
+  padding:35px;
+  backdrop-filter:blur(18px);
+  transition:0.5s;
+  position:relative;
+  overflow:hidden;
+  transform-style:preserve-3d;
+}
+
+.card::before{
+  content:'';
+  position:absolute;
+  width:250%;
+  height:250%;
+  background:linear-gradient(
+    45deg,
+    transparent,
+    rgba(0,229,255,0.08),
+    transparent
+  );
+
+  top:-100%;
+  left:-100%;
+  transform:rotate(25deg);
+}
+
+.card:hover::before{
+  animation:shine 1.5s linear;
+}
+
+@keyframes shine{
+  0%{
+    transform:translateX(-100%) rotate(25deg);
+  }
+
+  100%{
+    transform:translateX(100%) rotate(25deg);
+  }
+}
+
+.card:hover{
+  transform:
+  perspective(1000px)
+  rotateX(6deg)
+  rotateY(-6deg)
+  translateY(-15px);
+
+  border-color:rgba(0,229,255,0.5);
+
+  box-shadow:
+  0 15px 50px rgba(0,229,255,0.2);
+}
+
+.card h3{
+  color:var(--cyan);
+  margin-bottom:15px;
+}
+
+.card p{
+  color:var(--light);
+  line-height:1.8;
+}
+
+/* =========================
+   SKILLS
+========================= */
+
+.skills{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:18px;
+}
+
+.skill{
+  padding:15px 24px;
+  border-radius:50px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.08);
+  transition:0.5s;
+  position:relative;
+  overflow:hidden;
+}
+
+.skill:hover{
+  transform:scale(1.1) rotate(3deg);
+  background:linear-gradient(90deg,var(--cyan),var(--purple));
+}
+
+/* =========================
+   TIMELINE
+========================= */
+
+.timeline{
+  position:relative;
+  max-width:1200px;
+  margin:auto;
+}
+
+.timeline::after{
+  content:'';
+  position:absolute;
+  width:4px;
+  background:linear-gradient(var(--cyan),var(--purple));
+  top:0;
+  bottom:0;
+  left:50%;
+}
+
+.container{
+  padding:10px 40px;
+  position:relative;
+  width:50%;
+}
+
+.container.left{
+  left:0;
+}
+
+.container.right{
+  left:50%;
+}
+
+.content{
+  padding:30px;
+  background:rgba(255,255,255,0.05);
+  border-radius:20px;
+  backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,0.08);
+}
+
+.content h3{
+  color:var(--cyan);
+}
+
+/* =========================
+   CONTACT
+========================= */
+
+.socials{
+  display:flex;
+  justify-content:center;
+  gap:25px;
+  flex-wrap:wrap;
+  margin-top:40px;
+}
+
+.socials a{
+  width:70px;
+  height:70px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:50%;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.08);
+  color:white;
+  text-decoration:none;
+  font-size:1.6rem;
+  transition:0.5s;
+}
+
+.socials a:hover{
+  transform:translateY(-10px) rotate(360deg);
+  background:linear-gradient(90deg,var(--cyan),var(--purple));
+
+  box-shadow:
+  0 0 20px rgba(0,229,255,0.6),
+  0 0 60px rgba(139,92,246,0.4);
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+footer{
+  text-align:center;
+  padding:40px;
+  color:var(--light);
+  border-top:1px solid rgba(255,255,255,0.08);
+}
+
+/* =========================
+   SCROLL ANIMATION
+========================= */
+
+.reveal{
+  opacity:0;
+  transform:translateY(80px);
+  transition:1.2s;
+}
+
+.reveal.active{
+  opacity:1;
+  transform:translateY(0);
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width:900px){
+
+  .hero h1{
+    font-size:3rem;
+  }
+
+  nav ul{
+    display:none;
+  }
+
+  .timeline::after{
+    left:20px;
+  }
+
+  .container{
+    width:100%;
+    padding-left:60px;
+    padding-right:20px;
+  }
+
+  .container.right{
+    left:0;
+  }
+}
+
+</style>
+</head>
+
+<body>
+
+<canvas id="bgCanvas"></canvas>
+
+<!-- Shapes -->
+<div class="shape shape1"></div>
+<div class="shape shape2"></div>
+
+<!-- Navbar -->
+<nav>
+
+  <div class="logo">BHAGYAVATHI</div>
+
+  <ul>
+    <li><a href="#about">About</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+
+  <div class="hero-content">
+
+    <h1>
+      <span>Bhagyavathi Dadi</span>
+    </h1>
+
+    <div class="typing"></div>
+
+    <p>
+      AI Engineer • Machine Learning Developer • Quantum Computing Enthusiast • Full Stack Developer
+      <br><br>
+      Building futuristic AI systems, autonomous agents, recommendation engines,
+      computer vision solutions, and cloud-native applications.
+    </p>
+
+    <div class="hero-btns">
+      <a href="#projects" class="btn btn-primary">Explore Projects</a>
+      <a href="#contact" class="btn btn-outline">Contact Me</a>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="reveal">
+
+  <h2 class="section-title">About Me</h2>
+
+  <div class="card">
+
+    <p>
+      Undergraduate student pursuing B.Tech in Electronics and Communication Engineering
+      with a Minor in Computer Science Engineering at PVPSIT Vijayawada.
+      <br><br>
+
+      CGPA: 9.37/10.0
+
+      <br><br>
+
+      Selected among the Top 100 students nationwide for the WISER Quantum and AI Summer Program 2026.
+      Passionate about Artificial Intelligence, Machine Learning, Quantum Computing,
+      Generative AI, LLM Agents, and scalable cloud systems.
+    </p>
+
+  </div>
+
+</section>
+
+<!-- PROJECTS -->
+<section id="projects" class="reveal">
+
+  <h2 class="section-title">Projects</h2>
+
+  <div class="grid">
+
+    <div class="card">
+      <h3>Book Recommendation System</h3>
+      <p>
+        Production-ready recommendation engine using KNN collaborative filtering,
+        cosine similarity, FastAPI, Streamlit, and Docker deployment.
+      </p>
+    </div>
+
+    <div class="card">
+      <h3>AI Research Agent</h3>
+      <p>
+        Autonomous research agent using LangChain and LLaMA 3.3 implementing
+        ReAct framework and intelligent tool-calling workflows.
+      </p>
+    </div>
+
+    <div class="card">
+      <h3>Smart Parking Detection</h3>
+      <p>
+        Real-time parking occupancy detection system using OpenCV and YOLOv8.
+      </p>
+    </div>
+
+    <div class="card">
+      <h3>HyperGov</h3>
+      <p>
+        Hyperlocal governance platform with geo-fencing,
+        analytics dashboards, and civic transparency systems.
+      </p>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- SKILLS -->
+<section id="skills" class="reveal">
+
+  <h2 class="section-title">Skills</h2>
+
+  <div class="skills">
+
+    <div class="skill">Python</div>
+    <div class="skill">Machine Learning</div>
+    <div class="skill">Generative AI</div>
+    <div class="skill">LangChain</div>
+    <div class="skill">FastAPI</div>
+    <div class="skill">React.js</div>
+    <div class="skill">Cloud Computing</div>
+    <div class="skill">Quantum Computing</div>
+    <div class="skill">Computer Vision</div>
+    <div class="skill">YOLOv8</div>
+    <div class="skill">Docker</div>
+    <div class="skill">Git</div>
+
+  </div>
+
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience" class="reveal">
+
+  <h2 class="section-title">Experience</h2>
+
+  <div class="timeline">
+
+    <div class="container left">
+      <div class="content">
+        <h3>NIELIT Cloud Computing Intern</h3>
+        <p>
+          Working with AWS, Azure, virtualization,
+          scalable cloud infrastructure, and deployment systems.
+        </p>
+      </div>
+    </div>
+
+    <div class="container right">
+      <div class="content">
+        <h3>Infosys Springboard Internship</h3>
+        <p>
+          Developed collaborative learning platform features
+          including backend integration and authentication systems.
+        </p>
+      </div>
+    </div>
+
+    <div class="container left">
+      <div class="content">
+        <h3>AAI Internship</h3>
+        <p>
+          Analyzed airport communication systems,
+          radar infrastructure, and operational workflows.
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="reveal">
+
+  <h2 class="section-title">Contact</h2>
+
+  <div class="socials">
+
+    <a href="mailto:dadilakshminarayana9@gmail.com">
+      <i class="fa-solid fa-envelope"></i>
+    </a>
+
+    <a href="#">
+      <i class="fab fa-github"></i>
+    </a>
+
+    <a href="#">
+      <i class="fab fa-linkedin"></i>
+    </a>
+
+    <a href="tel:+916301461233">
+      <i class="fa-solid fa-phone"></i>
+    </a>
+
+  </div>
+
+</section>
+
+<footer>
+  © 2026 Bhagyavathi Dadi • Futuristic AI Portfolio
+</footer>
+
+<script>
+
+/* =========================
+   TYPING EFFECT
+========================= */
+
+const texts = [
+  "AI Engineer",
+  "Machine Learning Developer",
+  "Quantum Computing Enthusiast",
+  "Full Stack Developer",
+  "Research Innovator"
+];
+
+let count = 0;
+let index = 0;
+let currentText = '';
+let letter = '';
+
+(function type(){
+
+  if(count === texts.length){
+    count = 0;
+  }
+
+  currentText = texts[count];
+  letter = currentText.slice(0, ++index);
+
+  document.querySelector('.typing').textContent = letter;
+
+  if(letter.length === currentText.length){
+
+    setTimeout(() => {
+
+      index = 0;
+      count++;
+
+      type();
+
+    }, 1500);
+
+  } else {
+
+    setTimeout(type, 90);
+  }
+
+})();
+
+/* =========================
+   REVEAL ANIMATION
+========================= */
+
+function reveal(){
+
+  const reveals = document.querySelectorAll('.reveal');
+
+  reveals.forEach((el)=>{
+
+    const windowHeight = window.innerHeight;
+    const elementTop = el.getBoundingClientRect().top;
+
+    if(elementTop < windowHeight - 100){
+      el.classList.add('active');
+    }
+
+  });
+}
+
+window.addEventListener('scroll', reveal);
+
+/* =========================
+   3D CARD EFFECT
+========================= */
+
+document.querySelectorAll('.card').forEach(card=>{
+
+  card.addEventListener('mousemove',(e)=>{
+
+    const rect = card.getBoundingClientRect();
+
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+
+    const rotateX = (y - centerY) / 12;
+    const rotateY = (centerX - x) / 12;
+
+    card.style.transform =
+      `perspective(1000px)
+      rotateX(${rotateX}deg)
+      rotateY(${rotateY}deg)
+      scale(1.03)`;
+
+  });
+
+  card.addEventListener('mouseleave',()=>{
+
+    card.style.transform =
+      `perspective(1000px)
+      rotateX(0deg)
+      rotateY(0deg)
+      scale(1)`;
+
+  });
+
+});
+
+/* =========================
+   PARTICLE NETWORK
+========================= */
+
+const canvas = document.getElementById('bgCanvas');
+const ctx = canvas.getContext('2d');
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let particlesArray = [];
+
+class Particle{
+
+  constructor(){
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+
+    this.size = Math.random() * 3 + 1;
+
+    this.speedX = Math.random() * 1 - 0.5;
+    this.speedY = Math.random() * 1 - 0.5;
+  }
+
+  update(){
+
+    this.x += this.speedX;
+    this.y += this.speedY;
+
+    if(this.x > canvas.width || this.x < 0){
+      this.speedX *= -1;
+    }
+
+    if(this.y > canvas.height || this.y < 0){
+      this.speedY *= -1;
+    }
+  }
+
+  draw(){
+
+    ctx.fillStyle = 'rgba(0,229,255,0.8)';
+    ctx.beginPath();
+
+    ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
+
+    ctx.fill();
+  }
+}
+
+function initParticles(){
+
+  particlesArray = [];
+
+  for(let i=0;i<120;i++){
+    particlesArray.push(new Particle());
+  }
+}
+
+initParticles();
+
+function connectParticles(){
+
+  for(let a=0;a<particlesArray.length;a++){
+
+    for(let b=a;b<particlesArray.length;b++){
+
+      let dx = particlesArray[a].x - particlesArray[b].x;
+      let dy = particlesArray[a].y - particlesArray[b].y;
+
+      let distance = dx*dx + dy*dy;
+
+      if(distance < 12000){
+
+        ctx.strokeStyle =
+          'rgba(0,229,255,0.08)';
+
+        ctx.lineWidth = 1;
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+          particlesArray[a].x,
+          particlesArray[a].y
+        );
+
+        ctx.lineTo(
+          particlesArray[b].x,
+          particlesArray[b].y
+        );
+
+        ctx.stroke();
+      }
+    }
+  }
+}
+
+function animateParticles(){
+
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  particlesArray.forEach((particle)=>{
+
+    particle.update();
+    particle.draw();
+
+  });
+
+  connectParticles();
+
+  requestAnimationFrame(animateParticles);
+}
+
+animateParticles();
+
+window.addEventListener('resize',()=>{
+
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  initParticles();
+
+});
+
+/* =========================
+   SMOOTH PARALLAX
+========================= */
+
+window.addEventListener('scroll',()=>{
+
+  const scrollY = window.scrollY;
+
+  document.querySelector('.shape1').style.transform =
+    `translateY(${scrollY * 0.2}px)`;
+
+  document.querySelector('.shape2').style.transform =
+    `translateY(${-scrollY * 0.15}px)`;
+
+});
+
+</script>
+
+</body>
+</html>
